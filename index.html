@@ -34,8 +34,41 @@ img,svg{display:block;max-width:100%}
 header{position:fixed;top:0;left:0;right:0;z-index:200}
 header::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(11,12,15,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);opacity:0;transition:opacity .3s}
 header.solid::before{opacity:1}
-header .bar{display:flex;align-items:center;justify-content:space-between;padding:20px 56px 16px}
+header .bar{display:flex;align-items:center;justify-content:space-between;padding:20px 56px 16px;position:relative}
 @media(max-width:860px){header .bar{padding:18px 26px}}
+.header-pill{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:flex;align-items:center;
+  width:340px;max-width:38vw;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;
+  padding:4px 4px 4px 20px;
+  transition:.25s;
+  box-shadow:0 4px 18px rgba(0,0,0,.18);
+}
+.header-pill:focus-within{
+  width:400px;
+  border-color:rgba(255,255,255,.28);
+  background:rgba(255,255,255,.11);
+}
+.header-pill input{
+  flex:1;min-width:0;background:transparent;border:none;outline:none;
+  font-family:var(--sans);font-size:13.5px;
+  color:rgba(255,255,255,.68);
+  padding:9px 0;
+}
+.header-pill input::placeholder{color:rgba(255,255,255,.55)}
+.header-pill .hp-submit{
+  flex:none;width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:none;color:rgba(255,255,255,.75);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;
+}
+.header-pill .hp-submit:hover{background:var(--bronze);color:#100b06}
+.header-pill.has-text .hp-submit{background:var(--bronze);color:#100b06}
+@media(max-width:960px){.header-pill{display:none}}
 .brand{display:flex;align-items:center;font-family:var(--serif);font-size:19px;letter-spacing:.2px;font-weight:560}
 .brand-logo{width:28px;height:28px;border-radius:7px;margin-right:10px;flex:none}
 nav.links{display:flex;justify-content:center;gap:36px;font-size:13.5px;color:var(--mist);padding:14px 56px;border-top:1px solid var(--line-dark)}
@@ -127,6 +160,12 @@ footer{padding:80px 0 32px;border-top:1px solid var(--line-dark);text-align:cent
 <header id="siteHeader">
   <div class="bar">
     <a href="https://artibytte.com" class="brand"><img class="brand-logo" src="/logo-256.png" alt="" width="28" height="28">ArtiBytte</a>
+    <form class="header-pill" id="headerPillForm" autocomplete="off">
+      <input type="text" id="headerPillInput" placeholder="Have a system in mind?" aria-label="Start a conversation">
+      <button type="submit" class="hp-submit" aria-label="Send">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6"/></svg>
+      </button>
+    </form>
   </div>
   <nav class="links">
     <div class="navitem"><a href="https://artibytte.com">Home</a></div>
@@ -287,6 +326,24 @@ footer{padding:80px 0 32px;border-top:1px solid var(--line-dark);text-align:cent
 const header=document.getElementById('siteHeader');
 function onScroll(){ header.classList.toggle('solid',window.scrollY>40); }
 document.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+const headerPillForm=document.getElementById('headerPillForm');
+const headerPillInput=document.getElementById('headerPillInput');
+if(headerPillInput){
+  headerPillInput.addEventListener('input',function(){
+    headerPillForm.classList.toggle('has-text',headerPillInput.value.trim().length>0);
+  });
+}
+if(headerPillForm){
+  headerPillForm.addEventListener('submit',function(e){
+    e.preventDefault();
+    const msg=(headerPillInput.value||'').trim();
+    if(!msg) return;
+    window.location.href='mailto:hello@artibytte.co?subject='+encodeURIComponent('System inquiry')+'&body='+encodeURIComponent(msg);
+    headerPillInput.value='';
+    headerPillForm.classList.remove('has-text');
+  });
+}
 </script>
 </body>
 </html>
